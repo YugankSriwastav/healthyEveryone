@@ -1,4 +1,22 @@
 spring:
   application:
-#    name changed
     name: healthy
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/healthifiy
+    username: root
+    password: root123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  security:
+    user:
+      username: yugank
+      password: 123Yuvi
+
+  logging:
+    level:
+      org.springframework.security: DEBUG
