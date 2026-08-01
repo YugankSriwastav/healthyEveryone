@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import shiva_care.healthify.entity.Doctor;
-import shiva_care.healthify.service.DoctorService;
+import shiva_care.healthify.service.doctor.DoctorService;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -25,7 +25,7 @@ public class DoctorController {
     // Save Doctor
     @PostMapping("/doctors")
     public ResponseEntity<Doctor> saveDoctors(@RequestBody Doctor doctor){
-        doctor.setStartingTime(LocalTime.of(8,1));
+        doctor.setStartingTime(LocalTime.of(8,0));
         doctor.setEndTime(LocalTime.of(13,0));
       Doctor savedDoctor = doctorService.saveDoctor(doctor);
       return ResponseEntity.status(HttpStatus.CREATED).body(savedDoctor);

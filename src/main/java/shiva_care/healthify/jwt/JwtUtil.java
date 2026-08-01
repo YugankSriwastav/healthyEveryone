@@ -1,5 +1,6 @@
 package shiva_care.healthify.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -47,4 +48,28 @@ public class JwtUtil {
          return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
      }
 
+    public String extractUserName(String token) {
+         return extractAllClaims(token).getSubject();
+
+    }
+    public Claims extractAllClaims(String token){
+         return Jwts.parserBuilder()
+                 .setSigningKey(getSigningKey())
+                 .build()
+                 .parseClaimsJws(token)
+                 .getBody();
+    }
+
+    public boolean validateToken(String token, String userName) {
+         final String extractedUsername = extractUserName(token);
+         return ((extractedUsername.equals(userName)) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token){
+         return extractedExpiration(token).before(new Date());
+    }
+
+    private Date extractedExpiration(String token){
+         return extractAllClaims(token).getExpiration();
+    }
 }

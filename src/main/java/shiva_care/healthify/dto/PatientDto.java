@@ -1,6 +1,7 @@
 package shiva_care.healthify.dto;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
@@ -9,6 +10,8 @@ import lombok.*;
 @Getter
 @Setter
 public class PatientDto {
+    @Id
+    Long patientId;
     @NonNull
     String name;
     @NonNull
