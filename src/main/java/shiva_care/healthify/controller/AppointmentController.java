@@ -4,9 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shiva_care.healthify.entity.Doctor;
-import shiva_care.healthify.service.AppointmentService;
+import shiva_care.healthify.service.appointement.AppointmentService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -26,10 +27,12 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.FOUND).body(doctor);
     }
 
-    // 2nd API >> Availble Slots by doctor Id
+    // 2nd API >>
+     // working
+     // thsi api returns all available slots of doctor by id and date
     @GetMapping("/all-doctors/{doctorId}")
-    public ResponseEntity<List<Doctor>> findAvaility(@RequestBody Long id, LocalDateTime localDateTime){
-        appointmentService.findDoctorAvailability(id, localDateTime);
-        return ResponseEntity.status(HttpStatus.FOUND).body(doctor);
+    public List<LocalTime> findAvailabilityOfDoctor(Long docId, LocalDate date){
+      List<LocalTime> availableSlot = appointmentService.findDoctorAvailability(docId, date);
+      return ResponseEntity.status(HttpStatus.FOUND).body(availableSlot).getBody();
     }
 }

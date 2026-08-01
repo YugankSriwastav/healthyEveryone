@@ -11,4 +11,9 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<Doctor>findBySpecialization(String specialization);
 
     List<AppointmentEntity> findByDoctorIdAndDate(Long id, LocalDate localDate);
+
+    List<AppointmentEntity> findByDoctorIdAndAppointmentDate(
+            Long doctorId,
+            LocalDate appointmentDate
+    );
 }

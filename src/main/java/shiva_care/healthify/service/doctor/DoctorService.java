@@ -1,4 +1,4 @@
-package shiva_care.healthify.service;
+package shiva_care.healthify.service.doctor;
 
 import org.springframework.stereotype.Service;
 import shiva_care.healthify.entity.Doctor;
