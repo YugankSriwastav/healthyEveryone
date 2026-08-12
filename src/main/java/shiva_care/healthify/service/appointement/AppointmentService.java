@@ -1,6 +1,8 @@
 package shiva_care.healthify.service.appointement;
 
+import lombok.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import shiva_care.healthify.entity.AppointmentEntity;
 import shiva_care.healthify.entity.Doctor;
 import shiva_care.healthify.repository.AppointmentRepository;
@@ -9,10 +11,12 @@ import shiva_care.healthify.repository.DoctorRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 @Component
+@Service
 public class AppointmentService {
 
     final AppointmentRepository appointmentRepository;
@@ -25,6 +29,10 @@ public class AppointmentService {
 
     public List<Doctor> findDoctorBySpecialization(String specialization) {
         return appointmentRepository.findBySpecialization(specialization);
+    }
+
+    public String isDoctorExits(@NonNull Long doctorId, Date appointmentDate, LocalTime appointmentTime){
+
     }
 
     // find AvailableSlots
@@ -90,4 +98,6 @@ public class AppointmentService {
 
         return availableSlots;
     }
+
+
 }

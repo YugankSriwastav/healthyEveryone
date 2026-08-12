@@ -16,7 +16,13 @@ import java.util.Date;
                 )
         }
 )
-// es constraint ka matalb yah en teeno ka reapation jaha bhi hua error aa jayega
+//Agar same doctor ke liye same date aur same time ka appointment already exist karta hai,
+// to duplicate appointment database allow nahi karega
+
+/*
+jab appointment ka table banega usme agar ek hi date pe ek hi doctor
+ke ek hi time pe do logo ke appointment nhi ho sakta, reject ho jayega
+ */
 
 @Entity
 @Getter
