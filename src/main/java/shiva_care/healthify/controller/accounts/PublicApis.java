@@ -1,4 +1,4 @@
-package shiva_care.healthify.controller.patient;
+package shiva_care.healthify.controller.accounts;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -22,14 +22,14 @@ import java.util.Scanner;
 
 @RestController
 @RequestMapping("/public")
-public class PatientPublic {
+public class PublicApis {
     final UserAccountsServices patientService;
     final AuthenticationManager authenticationManager;
     final JwtUtil jwtUtil;
     final RedisTemplate<String,Object> redisTemplate;
     final Producer producer;
 
-    PatientPublic(UserAccountsServices patientService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RedisTemplate<String, Object> redisTemplate, Producer producer){
+    PublicApis(UserAccountsServices patientService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, RedisTemplate<String, Object> redisTemplate, Producer producer){
         this.patientService = patientService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -37,7 +37,7 @@ public class PatientPublic {
         this.producer = producer;
     }
     //save patient details
-    @PostMapping("/saveEntry")
+    @PostMapping("/signup")
     public ResponseEntity<PatientEntity> saveEntry(@RequestBody PatientEntity patientEntity){
         // verify user phone no and gmail
         patientService.verifyUser(patientEntity.getPhoneNo(), patientEntity.getGmail());

@@ -1,4 +1,4 @@
-package shiva_care.healthify.controller;
+package shiva_care.healthify.controller.admin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/appoint")
-public class DoctorController {
+public class AdminApis {
 
     final DoctorService doctorService;
 
-    public DoctorController(DoctorService doctorService) {
+    public AdminApis(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
 
