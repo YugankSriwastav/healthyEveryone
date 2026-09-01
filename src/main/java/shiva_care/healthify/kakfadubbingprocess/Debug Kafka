@@ -1,0 +1,35 @@
+# Kafka WSL + Windows Debugging
+
+## 1. Kafka running?
+ss -ltnp | grep 9092
+
+## 2. Kafka internally working?
+bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --list
+
+## 3. Windows can reach WSL Kafka?
+PowerShell:
+Test-NetConnection <WSL-IP> -Port 9092
+
+## 4. Find WSL IP
+wsl hostname -I
+
+## 5. Kafka advertised address
+config/server.properties
+
+advertised.listeners=PLAINTEXT://<WSL-IP>:9092
+
+## 6. Spring Boot
+spring:
+  kafka:
+    bootstrap-servers: <WSL-IP>:9092
+
+## Golden rule:
+Kafka running != Kafka reachable by application.
+
+Always check:
+1. Kafka is running
+2. Network is reachable
+3. advertised.listeners is correct
+4. Spring bootstrap-server is correct

@@ -31,11 +31,17 @@ public class AppointmentService {
         return appointmentRepository.findBySpecialization(specialization);
     }
 
-    public String isDoctorExits(@NonNull Long doctorId, Date appointmentDate, LocalTime appointmentTime){
-
+    public String isDoctorExits(@NonNull Long doctorId, LocalDate appointmentDate, LocalTime appointmentTime){
+       appointmentRepository.findByDoctorIdAndAppointmentDate(doctorId,appointmentDate);
+        return "Every thing is perfect";
     }
 
     // find AvailableSlots
+
+    public String bookAppointment(AppointmentEntity appointmentEntity){
+        appointmentRepository.save(appointmentEntity);
+        return "Appointment Book Successfully";
+    }
 
     public List<LocalTime> findDoctorAvailability(
           Long docId,

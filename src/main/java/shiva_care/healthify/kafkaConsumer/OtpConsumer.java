@@ -1,4 +1,4 @@
-package shiva_care.healthify.consumer;
+package shiva_care.healthify.kafkaConsumer;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,10 @@ public class OtpConsumer {
     @KafkaListener(topics = "otp-topic")
     public void consume(Event event){
         gmailService.sendGmail(
-                event.getGmail(),
-                event.getGmailOTO()
+                event.getTo(),
+                event.getGmailOTP(),
+                event.getMessage()
           );
-        smsService.sendSms(
-                event.getPhoneNo(),
-                event.getSmsOTO());
+
     }
 }
