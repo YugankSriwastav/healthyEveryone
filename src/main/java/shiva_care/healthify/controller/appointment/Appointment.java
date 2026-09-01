@@ -39,8 +39,7 @@ public class Appointment {
            return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter Time Slots or Entered Doctor" +
                    " may be wrong, Please check it again Thank You !!");
         }
-
-
-
+        appointmentService.bookAppointment(appointmentEntity);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Appointment Book Successfully");
     }
 }

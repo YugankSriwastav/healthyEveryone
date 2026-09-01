@@ -10,6 +10,8 @@ import lombok.Setter;
 public class Event {
     String phoneNo;
     String gmail;
-    String smsOTO;
-    String gmailOTO;
+    String smsOTP;
+    String message;
+    String to;
+    String gmailOTP;
 }

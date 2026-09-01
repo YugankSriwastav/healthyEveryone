@@ -1,5 +1,6 @@
 package shiva_care.healthify.controller.appointment;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,10 @@ import java.util.List;
 public class DoctorController {
     final AppointmentService appointmentService;
     final AppointmentServiceRedis serviceRedis;
-    final RedisTemplate<String, Doctor> redisTemplate;
+    @Qualifier("doctorListTemplate")
+    final RedisTemplate<String, List<Doctor>> redisTemplate;
 
-    public DoctorController(AppointmentService appointmentService, AppointmentServiceRedis serviceRedis, RedisTemplate<String, Doctor> redisTemplate) {
+    public DoctorController(AppointmentService appointmentService, AppointmentServiceRedis serviceRedis, @Qualifier("doctorListTemplate") RedisTemplate<String, List<Doctor>> redisTemplate) {
         this.appointmentService = appointmentService;
         this.serviceRedis = serviceRedis;
         this.redisTemplate = redisTemplate;

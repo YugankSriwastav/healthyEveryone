@@ -3,8 +3,10 @@ package shiva_care.healthify.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
+
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
@@ -37,8 +39,9 @@ public class AppointmentEntity {
     private Long patientId;
     @NonNull
    private Long doctorId;
+    String specialization;
    @JsonFormat(pattern = "yyyy-MM-dd")
-   private Date appointmentDate;
+   private LocalDate appointmentDate;
    private LocalTime appointmentTime;
 
 

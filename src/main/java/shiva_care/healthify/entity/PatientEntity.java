@@ -24,6 +24,6 @@ public class PatientEntity {
     @NonNull
     String gmail;
     @NonNull
-    String phoneNo;
+    String phNo;
     String Role;
 }
