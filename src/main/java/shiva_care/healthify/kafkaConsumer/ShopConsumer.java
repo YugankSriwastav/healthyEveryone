@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ShopConsumer {
+
     @KafkaListener(
-            topics = "order-topic",
-            groupId = "payment-group"
+            topics = "orders",
+            groupId = "payment-group",
+            clientIdPrefix = "shop"
     )
-    public void shopConsume(String message){
-        System.out.println("shop consume" + message);
+    public void shopConsume(String message) {
+        System.out.println("SHOP CONSUMER → " + message);
     }
 }

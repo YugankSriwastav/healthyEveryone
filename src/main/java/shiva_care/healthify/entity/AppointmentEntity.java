@@ -2,6 +2,7 @@ package shiva_care.healthify.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -34,15 +35,14 @@ ke ek hi time pe do logo ke appointment nhi ho sakta, reject ho jayega
 public class AppointmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long appointmentId;
-    @NonNull
+    private Long appointmentId;
+    @NotBlank
     private Long patientId;
-    @NonNull
-   private Long doctorId;
+    @NotBlank
+    private Long doctorId;
     String specialization;
-   @JsonFormat(pattern = "yyyy-MM-dd")
-   private LocalDate appointmentDate;
-   private LocalTime appointmentTime;
-
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate appointmentDate;
+    private LocalTime appointmentTime;
 
 }
