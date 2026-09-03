@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity
@@ -15,15 +17,19 @@ public class PatientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long patientId;
-    @NonNull
+    @NotBlank
     String name;
-    @NonNull
+    @NotBlank
     int age;
-    @NonNull
+    @NotBlank
     String password;
-    @NonNull
+    @NotBlank
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$",
+            message = "Only Gmail address is allowed"
+    )
     String gmail;
-    @NonNull
+    @NotBlank
     String phNo;
     String Role;
 }

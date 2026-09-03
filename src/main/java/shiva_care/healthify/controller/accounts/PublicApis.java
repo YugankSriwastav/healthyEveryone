@@ -73,12 +73,12 @@ public class PublicApis {
          // otp successfully saved in otp
 
         // kafka works start
-        String message = "Your otp is : ";
+
         Event event = new Event(patientEntity.getGmail(),phoneNo,gmail,smsOTP,gmailOTP,message);
         producer.sentOtp(event);
 
         // taking input from console to user
-
+        String message = "Your otp is : ";
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter your sms otp...");
         String smsOtp = sc.nextLine();
@@ -102,28 +102,5 @@ public class PublicApis {
 
     }
 
-
-     // Main
-
-    @PostMapping
-    public ResponseEntity<String> login(@RequestBody PatientDto patientDto){
-        try{
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            patientDto.getName(), patientDto.getPassword()
-                    )
-            );
-
-            // if user is authenticated by their given credentials then we can request for Access token
-            String token = jwtUtil.generateToken(patientDto);
-
-            return new ResponseEntity<>(token,HttpStatus.ACCEPTED);
-
-
-        }
-        catch(Exception exception){
-            return new ResponseEntity<>("Incorrect User name and password",HttpStatus.UNAUTHORIZED);
-        }
-    }
 
 }
