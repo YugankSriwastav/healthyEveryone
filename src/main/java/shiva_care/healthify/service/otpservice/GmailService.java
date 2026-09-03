@@ -6,15 +6,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GmailService {
-    JavaMailSender javaMailSender;
+    final JavaMailSender javaMailSender;
+
+    public GmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
+
     public void sendGmail(String to,String otp, String body){
     try{
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(otp);
-        message.setText("message");
+        message.setText("Thank you for choosing Healthify");
+        javaMailSender.send(message);
     } catch (Exception e) {
-        System.out.println(e);
+        e.printStackTrace();
     }
     }
 }
