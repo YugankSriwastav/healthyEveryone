@@ -37,6 +37,18 @@ spring:
       host: localhost
       port: 6379
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: yuganksriwastav552@gmail.com
+    password: bzfw whti snyu isdw
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   security:
     user:
       name: yugank

@@ -5,23 +5,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import shiva_care.healthify.dto.PatientDto;
 import shiva_care.healthify.entity.Doctor;
 import shiva_care.healthify.entity.PatientEntity;
 import shiva_care.healthify.exception.OtpIsWrong;
 import shiva_care.healthify.jwt.JwtUtil;
+import shiva_care.healthify.kafkaProducer.GmailProducer;
+import shiva_care.healthify.kafkaProducer.ProducerSMS;
 import shiva_care.healthify.kafkaevent.Event;
-import shiva_care.healthify.kafkaProducer.Producer;
 import shiva_care.healthify.service.patient.UserAccountsServices;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 @RestController
@@ -34,11 +34,12 @@ public class PublicApis {
     final RedisTemplate<String, List<Doctor>> redisTemplate;
     @Qualifier("otpRedisTemplate")
     final RedisTemplate<String, String> redisTemplateMessage;
-    final Producer producer;
+    final GmailProducer producer;
     final PasswordEncoder passwordEncoder;
+    final ProducerSMS producerSMS;
 
     PublicApis(UserAccountsServices patientService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, @Qualifier("doctorListTemplate") RedisTemplate<String,
-            List<Doctor>> redisTemplate, @Qualifier("otpRedisTemplate") RedisTemplate<String, String> redisTemplateMessage, Producer producer, PasswordEncoder passwordEncoder){
+            List<Doctor>> redisTemplate, @Qualifier("otpRedisTemplate") RedisTemplate<String, String> redisTemplateMessage, GmailProducer producer, PasswordEncoder passwordEncoder, ProducerSMS producerSMS){
         this.patientService = patientService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -46,6 +47,7 @@ public class PublicApis {
         this.redisTemplateMessage = redisTemplateMessage;
         this.producer = producer;
         this.passwordEncoder = passwordEncoder;
+        this.producerSMS = producerSMS;
     }
     //save patient details
     @PostMapping("/signup")
@@ -57,6 +59,7 @@ public class PublicApis {
         patientEntity.setPassword(encodedPassword);
         // generate opts and save into redis
         String gmailOTP =  patientService.generateGmailOTP();
+        System.out.println("your gmail otp is " + gmailOTP);
         String smsOTP = patientService.smsOTP();
         String phoneNo = patientEntity.getPhNo();
         String gmail = patientEntity.getGmail();
@@ -71,11 +74,20 @@ public class PublicApis {
         redisTemplateMessage.opsForValue().set(name + "gmail",gmailOTP,Duration.ofMinutes(5));
 
          // otp successfully saved in otp
+/*
+String phoneNo;
+    String gmail;
+    String smsOTP;
+    String message;
+    String to;
+    String gmailOTP;
+ */
 
         // kafka works start
-
-        Event event = new Event(patientEntity.getGmail(),phoneNo,gmail,smsOTP,gmailOTP,message);
-        producer.sentOtp(event);
+        Event event = new Event(phoneNo,gmail, smsOTP, "your otp is : ",patientEntity.getGmail(),gmailOTP);
+       // both otp provide to topic successfully
+        producer.sentGmailOtp(event);
+        producerSMS.sentSMSOtp(event.getSmsOTP());
 
         // taking input from console to user
         String message = "Your otp is : ";
@@ -88,10 +100,13 @@ public class PublicApis {
 
         // Check whether the otp is valid or invalid
 
-        Object objectSms =  redisTemplate.opsForValue().get(name + "sms");
-        Object objectGmail = redisTemplate.opsForValue().get(name + "sms");
+        String sms =  redisTemplateMessage.opsForValue().get(name + "sms");
+        String otpGmail = redisTemplateMessage.opsForValue().get(name + "gmail");
+        assert sms != null;
+        assert otpGmail != null;
 
-        if((objectSms == smsOtp) && (objectGmail == gmailOtp)){
+
+        if((sms.equals(smsOtp)) && (otpGmail.equals(gmailOtp))){
             patientService.verifyUser(patientEntity.getPhNo(), patientEntity.getGmail());
             PatientEntity entry = patientService.saveEntry(patientEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entry);

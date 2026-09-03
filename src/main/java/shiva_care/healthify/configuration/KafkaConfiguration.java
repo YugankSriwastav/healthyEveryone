@@ -28,4 +28,14 @@ public class KafkaConfiguration {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    public NewTopic smsOtp(){
+        return TopicBuilder
+                .name("sms-otp")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
 }
