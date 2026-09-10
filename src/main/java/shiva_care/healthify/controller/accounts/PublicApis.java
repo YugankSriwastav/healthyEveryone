@@ -1,15 +1,19 @@
 package shiva_care.healthify.controller.accounts;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import shiva_care.healthify.dto.LoginEntity;
+import shiva_care.healthify.dto.PatientDto;
 import shiva_care.healthify.entity.Doctor;
 import shiva_care.healthify.entity.PatientEntity;
 import shiva_care.healthify.exception.OtpIsWrong;
@@ -117,5 +121,27 @@ String phoneNo;
 
     }
 
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginEntity patientDto){
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            patientDto.getUserName(), patientDto.getPassword()
+                    )
+            );
+
+            // if user is authenticated by their given credentials then we can request for Access token
+            patientDto.setRole("USER");
+            String token = jwtUtil.generateToken(patientDto);
+
+            return new ResponseEntity<>(token, HttpStatus.ACCEPTED);
+
+
+        }
+        catch(Exception exception){
+            return new ResponseEntity<>("Incorrect User name and password",HttpStatus.UNAUTHORIZED);
+        }
+    }
 
 }

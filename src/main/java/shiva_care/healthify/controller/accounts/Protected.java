@@ -23,24 +23,5 @@ public class Protected {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody PatientDto patientDto){
-        try{
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            patientDto.getName(), patientDto.getPassword()
-                    )
-            );
 
-            // if user is authenticated by their given credentials then we can request for Access token
-            String token = jwtUtil.generateToken(patientDto);
-
-            return new ResponseEntity<>(token, HttpStatus.ACCEPTED);
-
-
-        }
-        catch(Exception exception){
-            return new ResponseEntity<>("Incorrect User name and password",HttpStatus.UNAUTHORIZED);
-        }
-    }
 }

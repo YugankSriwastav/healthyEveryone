@@ -40,7 +40,10 @@ public class AppointmentEntity {
     private Long patientId;
     @NotBlank
     private Long doctorId;
+    @NotBlank
+    private String symptoms;
     String specialization;
+    private int payment;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
     private LocalTime appointmentTime;

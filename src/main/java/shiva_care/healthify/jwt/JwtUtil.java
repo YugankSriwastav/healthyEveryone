@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import shiva_care.healthify.dto.LoginEntity;
 import shiva_care.healthify.dto.PatientDto;
 
 import java.nio.charset.StandardCharsets;
@@ -24,12 +25,12 @@ public class JwtUtil {
     private static final String SECRET_KEY =
             "your-256-bit-secret-your-256-bit-secret";
 
-     public String generateToken(PatientDto patientDto){
+     public String generateToken(LoginEntity patientDto){
 
          Map<String, Object> claims = new HashMap<>();
          claims.put("role", patientDto.getRole());
          claims.put("gmai", patientDto.getGmail());
-         return createToken(claims, patientDto.getName());
+         return createToken(claims, patientDto.getUserName());
      }
 
       String createToken(Map<String, Object> claims, String subject){

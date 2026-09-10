@@ -39,7 +39,17 @@ public class Appointment {
            return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter Time Slots or Entered Doctor" +
                    " may be wrong, Please check it again Thank You !!");
         }
+
+
+        // steps of booking (Payment Service) if Payment Status Done, then we will future to next step
+        /*
+         But if Payment is fail then we will got a exception
+         */
+
+        // if payment status is done, then we will save appointment to db and save notification to customer
+
         appointmentService.bookAppointment(appointmentEntity);
+
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Appointment Book Successfully");
     }
 }

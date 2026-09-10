@@ -33,10 +33,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         auth ->
                                 auth.requestMatchers("/public/**","/error").permitAll()
+                                        .requestMatchers("/login/**").permitAll()
                                         .requestMatchers("/order/**").permitAll()
                                         .requestMatchers("/private/**").hasRole("ADMIN")
-                                        .requestMatchers("/protect/**").hasRole("USER")
-                                        .anyRequest().authenticated()
+                                        .requestMatchers("/protected/**").hasRole("USER")
+                                        .anyRequest().denyAll()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
