@@ -3,6 +3,7 @@ package shiva_care.healthify.service.otpservice;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import shiva_care.healthify.exception.NotificationException;
 
 @Service
 public class GmailService {
@@ -13,14 +14,17 @@ public class GmailService {
     }
 
     public void sendGmail(String to,String otp, String body){
-    try{
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(otp);
-        message.setText("Thank you for choosing Healthify");
-        javaMailSender.send(message);
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+//    try{
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo(to);
+//        message.setSubject(otp);
+//        message.setText("Thank you for choosing Healthify");
+//
+//        javaMailSender.send(message);
+//    } catch (Exception e) {
+//        e.printStackTrace();
+
+        throw new NotificationException("Exception for Testing");
+//    }
     }
 }

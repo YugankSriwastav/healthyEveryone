@@ -2,7 +2,9 @@ package shiva_care.healthify.kafkaConsumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.stereotype.Service;
+import shiva_care.healthify.exception.NotificationException;
 import shiva_care.healthify.kafkaevent.Event;
 import shiva_care.healthify.service.otpservice.GmailService;
 import shiva_care.healthify.service.otpservice.SmsService;
@@ -18,14 +20,21 @@ public class OtpConsumer {
         this.smsService = smsService;
     }
 
+
+
+    @RetryableTopic(
+            attempts = "10"
+    )
     @KafkaListener(topics = "gmail-otp")
     public void gmailConsume(Event event){
        log.info("gmail consumer is running fine");
+
         gmailService.sendGmail(
                 event.getTo(),
                 event.getGmailOTP(),
                 event.getMessage()
           );
+
 
     }
     @KafkaListener(topics = "sms-otp")
