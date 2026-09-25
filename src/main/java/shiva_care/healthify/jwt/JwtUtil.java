@@ -29,7 +29,6 @@ public class JwtUtil {
 
          Map<String, Object> claims = new HashMap<>();
          claims.put("role", patientDto.getRole());
-         claims.put("gmai", patientDto.getGmail());
          return createToken(claims, patientDto.getUserName());
      }
 

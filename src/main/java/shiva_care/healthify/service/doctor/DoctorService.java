@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import shiva_care.healthify.entity.Doctor;
 import shiva_care.healthify.repository.DoctorRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -17,6 +18,12 @@ public class DoctorService {
     public Doctor saveDoctor (Doctor doctor){
         // Next Day code : ADD Exception Handling
         return doctorRepository.save(doctor);
+    }
+
+    // extracting fee of doctor to db
+
+    public long extractFee(Long id){
+        return doctorRepository.findDoctorFee(id);
     }
 
     public List<Doctor> saveAllDoctors(List<Doctor> doctors) {

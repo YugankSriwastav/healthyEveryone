@@ -43,7 +43,7 @@ public class OtpConsumer {
     }
 
     // Dead Handling : after given attempts kafka server will not work, just save them in queue
-@DltHandler
+    @DltHandler
     public void deadHandling(Event event){
         log.info("DLT Received :  {}, this message is ,", event.getMessage());
     }

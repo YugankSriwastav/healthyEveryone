@@ -1,19 +1,41 @@
 package shiva_care.healthify.controller.appointment;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import shiva_care.healthify.dto.AppointmentDto;
 import shiva_care.healthify.entity.AppointmentEntity;
+import shiva_care.healthify.exception.ExceptionHandling.AppointmentSlotAlreadyBooked;
+import shiva_care.healthify.exception.ExceptionHandling.DoctorNotFound;
+import shiva_care.healthify.repository.AppointmentRepository;
+import shiva_care.healthify.repository.DoctorRepository;
 import shiva_care.healthify.service.appointement.AppointmentService;
+import shiva_care.healthify.service.doctor.DoctorService;
 
+import java.math.BigDecimal;
+import java.util.Scanner;
+
+@Slf4j
 @RestController
 @RequestMapping("/appointment")
 public class Appointment {
 
     final AppointmentService appointmentService;
+    final RedisTemplate<String, Appointment> appointmentRedisTemplate;
+    final DoctorRepository doctorRepository;
+    final AppointmentRepository appointmentRepository;
+    final DoctorService doctorService;
 
-    public Appointment(AppointmentService appointmentService) {
+    public Appointment(AppointmentService appointmentService, RedisTemplate<String, Appointment> appointmentRedisTemplate, DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, DoctorService doctorService) {
         this.appointmentService = appointmentService;
+        this.appointmentRedisTemplate = appointmentRedisTemplate;
+        this.doctorRepository = doctorRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.doctorService = doctorService;
     }
 
     /*
@@ -52,4 +74,81 @@ public class Appointment {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Appointment Book Successfully");
     }
+
+    @Transactional
+    @PostMapping("/bookAppointment")
+    public ResponseEntity<String> bookAppointment(
+            @Valid @RequestBody AppointmentDto appointmentDTO) {
+
+        // 1. Check doctor exists or not
+        if (!doctorRepository.existsById(appointmentDTO.getDoctorId())) {
+            throw new DoctorNotFound(
+                    "doctor id is not right"
+            );
+        }
+
+        // 2. Check appointment slot already booked or not
+        boolean alreadyBooked =
+                appointmentRepository
+                        .existsByDoctorIdAndAppointmentDateAndAppointmentTime(
+                                appointmentDTO.getDoctorId(),
+                                appointmentDTO.getAppointmentDate(),
+                                appointmentDTO.getAppointmentTime()
+                        );
+
+        if (alreadyBooked) {
+            throw new AppointmentSlotAlreadyBooked(
+                    "this appointment slot is already book"
+            );
+        }
+
+        // 3. Convert DTO -> Entity
+        AppointmentEntity appointment = new AppointmentEntity();
+
+        appointment.setPatientId(appointmentDTO.getPatientId());
+        appointment.setDoctorId(appointmentDTO.getDoctorId());
+        appointment.setSymptoms(appointmentDTO.getSymptoms());
+        appointment.setSpecialization(appointmentDTO.getSpecialization());
+        appointment.setAppointmentDate(
+                appointmentDTO.getAppointmentDate()
+        );
+        appointment.setAppointmentTime(
+                appointmentDTO.getAppointmentTime()
+        );
+
+
+        // take fee from users
+           // step 1 : To check how many fee doctor have like 500, 100 etc
+
+        long fee  = doctorService.extractFee(appointmentDTO.getDoctorId());
+
+         // now here gateway work jab payment successfull ho tab next step badhe
+
+        log.info("Appointment Fee");
+        Scanner sc = new Scanner(System.in);
+        Long appointmentFee = sc.nextLong();
+
+        if (appointmentFee != fee) {
+            if (appointmentFee < fee) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Please Enter Full Amount");
+            }
+
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Please Enter only needed amount");
+        }
+
+// Fee same hai → appointment save
+        AppointmentEntity savedAppointment =
+                appointmentRepository.save(appointment);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedAppointment.getAppointmentId().toString());
+
+    }
+
+
 }

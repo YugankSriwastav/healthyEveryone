@@ -1,6 +1,7 @@
 package shiva_care.healthify.controller.accounts;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+@Slf4j
 @RestController
 @RequestMapping("/public")
 public class PublicApis {
@@ -58,12 +60,10 @@ public class PublicApis {
     public ResponseEntity<PatientEntity> saveEntry(@RequestBody PatientEntity patientEntity){
         // verify user phone no and gmail
         patientService.verifyUser(patientEntity.getPhNo(), patientEntity.getGmail());
-        String encodedPassword = passwordEncoder.encode(patientEntity.getPassword());
-        assert encodedPassword != null;
-        patientEntity.setPassword(encodedPassword);
+        patientEntity.setPassword(passwordEncoder.encode(patientEntity.getPassword()));
         // generate opts and save into redis
         String gmailOTP =  patientService.generateGmailOTP();
-        System.out.println("your gmail otp is " + gmailOTP);
+        log.info("Gmail otp {} : ", gmailOTP);
         String smsOTP = patientService.smsOTP();
         String phoneNo = patientEntity.getPhNo();
         String gmail = patientEntity.getGmail();
@@ -132,7 +132,6 @@ String phoneNo;
             );
 
             // if user is authenticated by their given credentials then we can request for Access token
-            patientDto.setRole("USER");
             String token = jwtUtil.generateToken(patientDto);
 
             return new ResponseEntity<>(token, HttpStatus.ACCEPTED);
